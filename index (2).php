@@ -211,7 +211,7 @@ function renderCarousel($sectionName, $carousels, $cslides)
   <title><?= $company['meta_title'] ?: $company['name'] ?></title>
   <meta name="description" content="<?= $company['meta_description'] ?>">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link href="/css/main.css" rel="stylesheet">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="<?= htmlspecialchars($company['logo']) ?>" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
@@ -230,7 +230,23 @@ function renderCarousel($sectionName, $carousels, $cslides)
 <body>
   <?= $company['body_script'] ?? '' ?> <!-- 这里插入 Body Script -->
 
-  <?php include('../header.php') ?>
+  <?php 
+  // 1. Turn on "recording" mode. Nothing prints to the screen yet.
+  ob_start();
+  
+  // 2. Load the original header file.
+  include '../header.php'; 
+  
+  // 3. Stop recording and save everything into a variable called $header_content.
+  $header_content = ob_get_clean();
+  
+  // 4. Search for the link to "header.css" and replace it with nothing (delete it).
+  // This removes the V3 styling that is breaking your design.
+  $header_content = preg_replace('/<link[^>]+header\.css[^>]*>/i', '', $header_content);
+  
+  // 5. Finally, print the cleaned-up header to the screen.
+  echo $header_content; 
+  ?>
   <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
   <div id="pageContent">
 
@@ -484,7 +500,22 @@ function renderCarousel($sectionName, $carousels, $cslides)
         <?php endforeach; ?>
       </div>
     </div>
-    <?php include('../footer.php') ?>
+    <?php 
+        // 1. Turn on recording mode.
+        ob_start();
+  
+        // 2. Load the original footer file.
+        include '../footer.php'; 
+  
+        // 3. Save the footer content into a variable.
+        $footer_content = ob_get_clean();
+  
+        // 4. Search for the link to "footer.css" and delete it.
+        $footer_content = preg_replace('/<link[^>]+footer\.css[^>]*>/i', '', $footer_content);
+  
+        // 5. Print the cleaned-up footer.
+        echo $footer_content; 
+    ?>
   </div>
 </body>
 
