@@ -1,0 +1,509 @@
+/* --- 1. Reset & Global Variables --- */
+:root {
+  --primary-color: #2c3e50; /* Dark Slate - Professional */
+  --accent-color: #3498db;  /* Bright Blue - Action */
+  --text-dark: #333333;
+  --text-light: #666666;
+  --bg-light: #f8f9fa;      /* Very light grey background */
+  --white: #ffffff;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
+  --radius: 12px;           /* Modern rounded corners */
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  line-height: 1.7;
+  background-color: var(--white);
+  margin: 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+/* Add a subtle underline to section titles */
+h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: var(--accent-color);
+  margin: 15px auto 0;
+  border-radius: 2px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- 2. Layout & Section Spacing --- */
+.main-content {
+  width: 100%;
+  overflow: hidden;
+}
+
+.section {
+  padding: 80px 5%; /* Generous padding for a modern look */
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Alternate background colors for sections to create depth */
+.section:nth-child(even) {
+  background-color: var(--bg-light);
+}
+
+/* --- 3. Hero Banner Slider --- */
+.banner-slider {
+  position: relative;
+  width: 100%;
+  height: 85vh; /* Large impactful banner */
+  overflow: hidden;
+}
+
+.banner-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  background: #000;
+}
+
+.banner-slide.active {
+  opacity: 1;
+}
+
+.banner-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8; /* Slight overlay for text readability */
+}
+
+/* Banner Caption */
+#banner-caption {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--white);
+  z-index: 10;
+  width: 80%;
+}
+
+#banner-caption h2 {
+  color: var(--white);
+  font-size: 3.5rem;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  margin-bottom: 0;
+}
+
+#banner-caption h2::after {
+  background: var(--white); /* White underline for banner */
+}
+
+/* Banner Dots */
+.banner-dots {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.dot.active {
+  background: var(--white);
+  transform: scale(1.2);
+}
+
+/* --- 4. About Section --- */
+.about-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.about-left {
+  flex: 1;
+}
+
+.about-left h2 {
+  text-align: left; /* Reset center alignment */
+}
+
+.about-left h2::after {
+  margin: 15px 0 0; /* Left align underline */
+}
+
+.about-right {
+  flex: 1;
+  position: relative;
+}
+
+.about-right img {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- 5. Features Section (Cards) --- */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.feature-box {
+  background: var(--white);
+  padding: 40px 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  transition: var(--transition);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.feature-box:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-md);
+}
+
+.feature-box .box-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 20px;
+  object-fit: contain;
+}
+
+.feature-box h3 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+}
+
+/* --- 6. Provide / Services Section --- */
+.provide-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.provide-left {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 50px;
+}
+
+.provide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.provide-box {
+  background: var(--white);
+  padding: 30px;
+  border-radius: var(--radius);
+  border-left: 5px solid var(--accent-color);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.provide-box:hover {
+  background: var(--accent-color);
+  color: var(--white);
+}
+
+.provide-box:hover h3, 
+.provide-box:hover p {
+  color: var(--white);
+}
+
+.provide-box .box-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 20px;
+  /* Filter to make icon white on hover if needed - advanced CSS */
+}
+
+/* --- 7. Gallery Section --- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.gallery-grid a {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius);
+  height: 250px;
+}
+
+.gallery-grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery-grid a:hover img {
+  transform: scale(1.1); /* Zoom effect */
+}
+
+/* --- 8. Video Section --- */
+.video-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.video-item {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.video-thumb {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  background: #000;
+}
+
+.video-thumb iframe, 
+.video-thumb video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-content {
+  padding: 20px;
+}
+
+.video-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.video-fav-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.video-fav-btn.active {
+  color: #e74c3c;
+}
+
+/* --- 9. Carousel Component (Reused) --- */
+.carousel-wrapper {
+  margin-top: 50px;
+  padding: 20px 0;
+}
+
+.carousel-title {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.carousel-container {
+  overflow: hidden;
+  width: 100%;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
+
+.carousel-slide {
+  min-width: 100%; /* Default mobile */
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .carousel-slide {
+    min-width: 33.333%; /* 3 slides per view on desktop */
+  }
+}
+
+.slide-box {
+  background: var(--white);
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  height: 100%;
+}
+
+/* --- 10. Social Floating Buttons --- */
+.social-toggle {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: var(--accent-color);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+}
+
+.social-toggle img {
+  width: 30px;
+  height: 30px;
+  filter: invert(1);
+}
+
+.social-buttons {
+  position: fixed;
+  bottom: 100px;
+  right: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+  z-index: 998;
+}
+
+.social-buttons.show {
+  opacity: 1;
+  visibility: visible;
+  bottom: 100px;
+}
+
+.social-btn {
+  width: 50px;
+  height: 50px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.social-btn:hover {
+  transform: scale(1.1);
+}
+
+.social-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+/* --- 11. PDF Section --- */
+.pdf-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.pdf-item {
+  background: var(--white);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.pdf-download-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: var(--primary-color);
+  color: var(--white);
+  border-radius: 50px;
+  font-size: 0.9rem;
+}
+
+.pdf-download-btn:hover {
+  background: var(--accent-color);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+  .about-wrapper {
+    flex-direction: column;
+  }
+  
+  .about-left h2 {
+    text-align: center;
+  }
+  
+  .about-left h2::after {
+    margin: 15px auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 60px 20px;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  #banner-caption h2 {
+    font-size: 2rem;
+  }
+  
+  .banner-slider {
+    height: 60vh;
+  }
+}
