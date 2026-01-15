@@ -119,55 +119,600 @@ img.box-icon {
 .banner-slide img { opacity: 0.7; width: 100%; height: 100%; object-fit: cover; }
 #banner-caption h2 { color: #fff; font-size: 3rem; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
-/* --- 8. HEADER & FOOTER RESTORATION --- */
-/* These rules fix the "fucked up" header/footer by resetting font sizes and positions */
+/* =========================================
+   STEP 1: HEADER & MENU FIX
+   (Paste this at the VERY BOTTOM of main.css)
+   ========================================= */
 
-header { 
-    background: #fff !important; 
-    z-index: 1000; 
-    position: relative; 
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+/* 1. Reset the Header Container */
+header {
+    background-color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 9999 !important;
+    padding: 0 !important;
+    height: 80px !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 .header-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
+    width: 100% !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 20px !important;
+    height: 100% !important;
 }
 
-/* Ensure Logo isn't huge */
-.header-container img.logo {
+/* 2. Fix the Logo Size */
+.header-container .logo {
     height: 50px !important;
     width: auto !important;
-    max-width: 200px !important;
+    object-fit: contain !important;
+    margin: 0 !important;
 }
 
-/* Fix Navigation Menu */
-#mainNav { 
-    display: flex !important; 
-    gap: 20px !important; 
-    align-items: center !important; 
+/* 3. Fix the Navigation Menu Row */
+#mainNav {
+    display: flex !important;
+    gap: 25px !important;
+    align-items: center !important;
+    background: transparent !important;
+    position: static !important;
+    box-shadow: none !important;
+    height: auto !important;
+    width: auto !important;
+    margin: 0 !important;
 }
 
+/* 4. Fix the Links and Text */
 #mainNav a {
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    color: #333 !important;
     text-decoration: none !important;
+    color: #2c3e50 !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important; /* Space between icon and text */
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease !important;
+    border-bottom: none !important; /* Remove any old underlines */
 }
 
-/* Fix Footer Text Color */
-footer {
-    background-color: #2c3e50 !important;
-    color: #fff !important;
-    padding-top: 50px;
+#mainNav a:hover {
+    background-color: rgba(52, 152, 219, 0.1) !important;
+    color: #3498db !important;
 }
 
-.footer-contact h3, 
-.footer-contact span,
+/* 5. CRITICAL: Fix the Giant Icons in the Menu */
+/* This forces those huge black icons to be small (20px) */
+#mainNav .nav-icon {
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: contain !important;
+    margin: 0 !important;
+    display: inline-block !important;
+    opacity: 0.7 !important;
+}
+
+#mainNav a:hover .nav-icon {
+    opacity: 1 !important;
+}
+
+/* 6. Hide Hamburger Button on Desktop */
+.menu-toggle {
+    display: none !important; 
+}
+
+/* 7. Mobile Responsive Adjustments */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: block !important;
+        font-size: 24px !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+        color: #333 !important;
+    }
+
+    /* Hide the menu on mobile until clicked */
+    #mainNav {
+        display: none !important; 
+        position: absolute !important;
+        top: 80px !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: white !important;
+        flex-direction: column !important;
+        padding: 20px !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        gap: 10px !important;
+        align-items: flex-start !important;
+    }
+
+    /* JavaScript adds the 'show' class to display it */
+    #mainNav.show {
+        display: flex !important;
+    }
+    
+    #mainNav a {
+        width: 100% !important;
+        padding: 15px !important;
+    }
+}
+
+/* =========================================
+   FOOTER REDESIGN
+   ========================================= */
+
+.social-toggle {
+    width: 60px !important;
+    height: 60px !important;
+    background: #00b14f !important; /* Keep the green brand color */
+    border-radius: 50% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    z-index: 9999 !important;
+    box-shadow: 0 5px 15px rgba(0, 177, 79, 0.4) !important;
+    cursor: pointer !important;
+}
+
+/* Force the image inside to be small and white */
+.social-toggle img {
+    width: 30px !important;
+    height: 30px !important;
+    max-width: 30px !important;
+    object-fit: contain !important;
+    filter: brightness(0) invert(1) !important; /* Turns black icon to white */
+    margin: 0 !important;
+}
+
+/* 2. Main Footer Container - Modern Slate Look */
+footer#contact {
+    background-color: #1e293b !important; /* Professional Dark Blue-Grey */
+    color: #cbd5e1 !important; /* Soft light grey text */
+    padding: 80px 0 30px !important;
+    position: relative !important;
+    margin-top: 100px !important;
+}
+
+/* Add a colorful top border line */
+footer#contact::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #3498db, #00b14f) !important;
+}
+
+/* 3. Footer Layout - Spread out nicely */
+.footer-top-modern {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    gap: 50px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+}
+
+/* 4. Left Side: Navigation Links (2-Column Grid) */
+.footer-brand-nav {
+    flex: 1 !important;
+    min-width: 250px !important;
+}
+
+.footer-nav {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 Columns */
+    gap: 15px !important;
+}
+
 .footer-nav a {
     color: #fff !important;
+    text-decoration: none !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    opacity: 0.8 !important;
+}
+
+/* Add a cool arrow before each link */
+.footer-nav a::before {
+    content: '›' !important;
+    color: #3498db !important;
+    margin-right: 8px !important;
+    font-size: 1.4rem !important;
+    line-height: 0 !important;
+    position: relative !important;
+    top: -2px !important;
+}
+
+.footer-nav a:hover {
+    color: #3498db !important;
+    transform: translateX(5px) !important;
+    opacity: 1 !important;
+}
+
+/* 5. Right Side: Contact Info (Card Style) */
+.footer-contact {
+    flex: 1 !important;
+    min-width: 300px !important;
+    background: rgba(255, 255, 255, 0.05) !important; /* Glass effect */
+    padding: 30px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.footer-contact h3 {
+    color: #fff !important;
+    font-size: 1.3rem !important;
+    margin-bottom: 20px !important;
+    border-bottom: 2px solid #3498db !important;
+    display: inline-block !important;
+    padding-bottom: 5px !important;
+}
+
+.contact-item {
+    margin-bottom: 15px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+    color: #cbd5e1 !important;
+}
+
+/* 6. Footer Bottom / Copyright */
+.footer-bottom {
+    text-align: center !important;
+    margin-top: 60px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    font-size: 0.9rem !important;
+    opacity: 0.6 !important;
+}
+
+/* 7. Hide the old Vertical Separator line */
+.footer-separator {
+    display: none !important;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .footer-top-modern {
+        flex-direction: column !important;
+    }
+    .footer-nav {
+        grid-template-columns: 1fr !important; /* 1 Column on mobile */
+    }
+}
+
+/* 1. Body Styling - Revert to White but Keep Big Text */
+body {
+    background-color: #ffffff !important; /* Back to White */
+    color: #333333 !important; /* Dark Text */
+    font-size: 17px !important; /* Slightly bigger text for readability */
+}
+
+/* 2. Reset Cards to White */
+.feature-box, 
+.provide-box, 
+.video-item, 
+.blog-card,
+.about-content {
+    background-color: #ffffff !important;
+    border: 1px solid #eee !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+}
+
+.feature-box:hover, 
+.provide-box:hover {
+    background-color: #ffffff !important;
+    border-color: #00b14f !important;
+    transform: translateY(-5px) !important;
+}
+
+/* 3. Restore Icons to Original Colors */
+.feature-box .box-icon,
+.nav-icon {
+    filter: none !important; /* Remove the white filter */
+}
+
+/* 4. Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #2c3e50 !important; /* Dark Blue-Grey Headings */
+}
+
+p {
+    color: #666666 !important;
+}
+
+/* 5. FOOTER DARK MODE (Keep this Dark) */
+footer#contact {
+    background-color: #1a1a1a !important; /* Dark Grey Background */
+    color: #cccccc !important;
+    padding-top: 60px !important;
+    margin-top: 80px !important;
+}
+
+/* Footer Links & Text */
+.footer-contact h3,
+.footer-nav a,
+.footer-bottom {
+    color: #ffffff !important;
+}
+
+.contact-item {
+    color: #bbbbbb !important;
+}
+
+.footer-nav a {
+    opacity: 0.8 !important;
+    font-size: 16px !important;
+    margin-bottom: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.footer-nav a:hover {
+    color: #00b14f !important;
+    opacity: 1 !important;
+}
+
+/* 6. Footer Layout - Force Vertical List */
+/* This overrides the grid layout from the previous step */
+.footer-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+}
+
+/* =========================================
+    FOOTER FONT & ALIGNMENT
+   ========================================= */
+
+/* 1. Make the Links Bigger */
+.footer-nav a {
+    font-size: 18px !important;  /* Increased from 16px */
+    font-weight: 500 !important; /* Make them slightly bolder */
+    line-height: 2.2 !important; /* More space between links */
+}
+
+/* 2. Align Links Parallel to the Contact Box */
+/* The Contact Box has padding, so we push the links down to match it */
+.footer-brand-nav {
+    padding-top: 35px !important; /* Pushes links down to align with "Contact Us" title */
+}
+
+/* 3. Ensure the Footer Layout stays side-by-side */
+.footer-top-modern {
+    align-items: flex-start !important; /* Aligns both columns at the top */
+}
+
+/* =========================================
+   STEP 12: COMPACT SERVICES (2x2 GRID FIXED)
+   (Paste at bottom of main.css)
+   ========================================= */
+
+/* 1. COMPACT GRID LAYOUT */
+.provide-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 Columns */
+    gap: 20px !important; /* Smaller gap between cards */
+    max-width: 1000px !important; /* Limit width to keep it compact */
+    margin: 0 auto !important;
+}
+
+/* 2. COMPACT CARD STYLE */
+.provide-box {
+    background: #fff !important;
+    padding: 15px !important; /* Reduce padding inside the white box */
+    border: 1px solid #eee !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+}
+
+/* 3. FIX IMAGE CROPPING & SIZE */
+.provide-box .box-icon {
+    width: 100% !important;
+    height: 160px !important; /* Smaller fixed height */
+    object-fit: contain !important; /* SHOW FULL IMAGE (No cropping) */
+    object-position: center !important;
+    margin-bottom: 10px !important; /* Reduce gap below image */
+    background-color: #f9f9f9 !important; /* Light grey background for empty space */
+    border-radius: 4px !important;
+}
+
+/* 4. FIX "BIG GAP" & TEXT SIZES */
+.provide-box h3 {
+    font-size: 1.2rem !important; /* Smaller title */
+    margin: 5px 0 5px 0 !important; /* Tighten margins */
+    color: #2c3e50 !important;
+    font-weight: 700 !important;
+}
+
+.provide-box p {
+    font-size: 0.95rem !important; /* Smaller text */
+    line-height: 1.4 !important;
+    color: #666 !important;
+    margin: 0 !important;
+}
+
+/* 5. SECTION SPACING */
+#provide {
+    padding-top: 20px !important; /* Pull section up closer */
+    padding-bottom: 40px !important;
+}
+
+.provide-wrapper .provide-left {
+    margin-bottom: 20px !important; /* Reduce gap between main title and grid */
+}
+
+/* MOBILE: Stack vertically */
+@media (max-width: 768px) {
+    .provide-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* =========================================
+   STEP 15: V3 HOME & "FULL PAGE" SPLIT ABOUT US
+   (Paste at bottom of main.css)
+   ========================================= */
+
+/* --- 1. HOME BANNER (V3 STATIC STYLE) --- */
+.banner-slider {
+    height: 100vh !important; /* Covers full page */
+    width: 100% !important;
+    background-color: #ffffff !important; /* White Background */
+    position: relative !important;
+    z-index: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.banner-slide img {
+    object-fit: contain !important; /* Shows WHOLE image (V3 style) */
+    object-position: center center !important;
+    width: 100% !important;
+    height: 100% !important;
+    animation: none !important; /* Static (No Zoom) */
+    box-shadow: none !important; 
+    filter: none !important;
+}
+
+
+/* --- 2. ABOUT US: "FULL SCREEN SPLIT" DESIGN --- */
+/* This forces the section to be exactly 100% of the screen height */
+
+#about {
+    height: 100vh !important; /* Force Full Screen Height */
+    width: 100% !important;
+    padding: 0 !important; /* No Padding */
+    margin: 0 !important;
+    background-color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: hidden !important; /* Prevents outer scrolling */
+}
+
+.about-wrapper {
+    display: flex !important;
+    flex-direction: row !important; /* Side by Side */
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important; /* Remove max-width limits */
+    margin: 0 !important;
+    gap: 0 !important; /* Edges touch perfectly */
+}
+
+/* IMAGE SIDE (Left Half) */
+.about-right {
+    flex: 1 !important; /* Takes 50% width */
+    height: 100% !important;
+    order: 1 !important; /* Left Side */
+    padding: 0 !important;
+}
+
+.about-right img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important; /* Fills the left side top-to-bottom */
+    border-radius: 0 !important; /* No corners */
+    box-shadow: none !important;
+}
+
+/* TEXT SIDE (Right Half) */
+.about-left {
+    flex: 1 !important; /* Takes 50% width */
+    height: 100% !important;
+    order: 2 !important; /* Right Side */
+    
+    /* Center Content Vertically & Horizontally */
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; 
+    
+    padding: 0 6% !important; /* Padding inside the text box */
+    text-align: left !important;
+    background: #ffffff !important;
+}
+
+/* Title Styling */
+.about-left h2 {
+    font-size: 3rem !important;
+    color: #2c3e50 !important;
+    margin-bottom: 30px !important;
+    position: relative !important;
+    text-align: left !important;
+    padding-left: 20px !important;
+}
+
+/* Green Side Line */
+.about-left h2::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 6px !important;
+    bottom: 6px !important;
+    width: 6px !important;
+    background-color: #00b14f !important;
+    border-radius: 4px !important;
+}
+.about-left h2::after { display: none !important; }
+
+/* Text Styling */
+.about-left div {
+    font-size: 1.1rem !important;
+    line-height: 1.8 !important;
+    color: #555 !important;
+}
+
+/* --- 3. SPACE SAVING (HIDE BLANK LINES) --- */
+.about-left div p {
+    margin-bottom: 15px !important;
+}
+/* Hide breaks and empty paragraphs to keep it compact */
+.about-left div br, 
+.about-left div p:empty { 
+    display: none !important; 
+}
+
+/* --- 4. MOBILE RESPONSIVE --- */
+/* On phone, we stack them 50/50 vertically */
+@media (max-width: 992px) {
+    #about {
+        height: auto !important; /* Allow scroll on phone */
+        padding: 0 !important;
+    }
+    
+    .about-wrapper {
+        flex-direction: column !important;
+    }
+    
+    .about-right { 
+        height: 50vh !important; /* Image takes top half */
+        width: 100% !important;
+    }
+    
+    .about-left { 
+        height: auto !important;
+        padding: 40px 20px !important;
+    }
 }
