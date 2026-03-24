@@ -1,12 +1,8 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 $domain = $_SERVER['HTTP_HOST'];
-require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../auto_update_db.php';
-require_once __DIR__ . '/../auto_sync_data.php';
+include 'config.php';
+require_once 'auto_update_db.php';
+require_once 'auto_sync_data.php';
 
 // 如果开头是 www.，自动去掉再重定向
 if (strpos($domain, 'www.') === 0) {
@@ -50,6 +46,7 @@ if (!$company) {
   exit;
 }
 
+
 // Banner 不需要多语言
 $bannerStmt = $pdo->prepare("SELECT image FROM {$prefix}companyBanner");
 $bannerStmt->execute();
@@ -66,9 +63,6 @@ $provides->execute([$company['id'], $language_id]);
 $company['provide'] = $provides->fetchAll(PDO::FETCH_ASSOC);
 
 // Gallery 不需要多语言
-// $gallery = $pdo->prepare("SELECT image_path FROM {$prefix}companyGallery");
-// $gallery->execute();
-// $company['gallery'] = $gallery->fetchAll(PDO::FETCH_COLUMN);
 $gallery = $pdo->prepare("SELECT image_path, caption FROM {$prefix}companyGallery");
 $gallery->execute();
 $company['gallery'] = $gallery->fetchAll(PDO::FETCH_ASSOC);
@@ -98,8 +92,7 @@ foreach ($sections as $section) {
 
 // --- Fetch Blogs ---
 $blogs = $pdo->prepare("
-  SELECT * 
-  FROM {$prefix}blogs 
+  SELECT * FROM {$prefix}blogs 
   WHERE language_id = ? 
     AND status = 'published' 
     AND created_at <= CONVERT_TZ(NOW(), '+00:00', '+08:00') 
@@ -202,15 +195,6 @@ function renderCarousel($sectionName, $carousels, $cslides)
   </div>
 <?php } ?>
 
-<?php
-function isMobileDevice() {
-  $ua = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
-  return preg_match('/iphone|ipad|ipod|android|mobile|silk|kindle|blackberry|opera mini/', $ua);
-}
-
-$heroHeight = isMobileDevice() ? '55vh' : '100vh';   // <-- change 55vh to what you like
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -219,388 +203,192 @@ $heroHeight = isMobileDevice() ? '55vh' : '100vh';   // <-- change 55vh to what 
   <title><?= $company['meta_title'] ?: $company['name'] ?></title>
   <meta name="description" content="<?= $company['meta_description'] ?>">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link href="/v4/main.css?v=<?php echo time(); ?>" rel="stylesheet">
-  
-<style>
-/* ===== Header Redesign A1: Dark Floating Bar ===== */
-header, .navbar, .site-header, .topbar {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 9999 !important;
-  background: rgba(17,24,39,.92) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255,255,255,.08) !important;
-}
-
-/* inner container */
-header .container, .navbar .container, .site-header .container,
-header .main-content, .navbar .main-content, .site-header .main-content {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-}
-
-/* links */
-header a, .navbar a, .site-header a, .topbar a {
-  color: rgba(255,255,255,.92) !important;
-  font-weight: 650 !important;
-  text-decoration: none !important;
-}
-
-/* pill nav */
-header nav a, .navbar nav a, .site-header nav a,
-header .nav a, .navbar .nav a, .site-header .nav a {
-  padding: 10px 12px !important;
-  border-radius: 999px !important;
-}
-
-/* hover + active */
-header nav a:hover, .navbar nav a:hover, .site-header nav a:hover,
-header .nav a:hover, .navbar .nav a:hover, .site-header .nav a:hover {
-  background: rgba(255,255,255,.10) !important;
-}
-
-header nav a.active, .navbar nav a.active, .site-header nav a.active,
-header .nav a.active, .navbar .nav a.active, .site-header .nav a.active {
-  background: rgba(255,255,255,.16) !important;
-}
-
-/* dropdown/select */
-header select, .navbar select, .site-header select {
-  background: rgba(255,255,255,.10) !important;
-  color: #fff !important;
-  border: 1px solid rgba(255,255,255,.18) !important;
-  border-radius: 12px !important;
-  padding: 8px 10px !important;
-}
-
-/* logo if exists */
-header img, .navbar img, .site-header img {
-  border-radius: 10px !important;
-}
-
-/* mobile */
-@media (max-width:768px){
-  header, .navbar, .site-header { padding-left: 8px !important; padding-right: 8px !important; }
-}
-</style>
-
-<style>
-/* ===== Force header nav icons to light color ===== */
-
-/* 1) font-icon <i> */
-header nav a i,
-.navbar nav a i,
-.site-header nav a i,
-header .nav a i,
-.navbar .nav a i {
-  color: #e5e7eb !important;
-}
-
-/* 2) inline svg */
-header nav a svg,
-.navbar nav a svg,
-.site-header nav a svg,
-header .nav a svg,
-.navbar .nav a svg {
-  fill: #e5e7eb !important;
-  stroke: #e5e7eb !important;
-}
-
-/* if svg uses currentColor, force it */
-header nav a svg * ,
-.navbar nav a svg * {
-  fill: currentColor !important;
-  stroke: currentColor !important;
-}
-
-/* 3) image icons (png/svg as <img>) — make them white via filter */
-header nav a img,
-.navbar nav a img,
-.site-header nav a img,
-header .nav a img,
-.navbar .nav a img {
-  filter: invert(1) grayscale(1) brightness(1.2) !important;
-  opacity: .95 !important;
-}
-
-/* hover become brighter */
-header nav a:hover i,
-header nav a:hover svg,
-header nav a:hover img,
-.navbar nav a:hover i,
-.navbar nav a:hover svg,
-.navbar nav a:hover img {
-  opacity: 1 !important;
-  color: #ffffff !important;
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
-  filter: invert(1) grayscale(0) brightness(1.35) !important;
-}
-</style>
-
-<style>
-/* =========================
-   DESKTOP ONLY (>= 769px)
-   ========================= */
-@media (min-width: 769px) {
-  /* Keep your dark header look */
-  header, .navbar, .site-header, .topbar {
-    background: rgba(17,24,39,.92) !important;
-    border-bottom: 1px solid rgba(255,255,255,.08) !important;
-  }
-
-  /* Desktop: light text/icons */
-  header a, .navbar a, .site-header a,
-  header i, .navbar i, .site-header i,
-  header svg, .navbar svg, .site-header svg {
-    color: #e5e7eb !important;
-    fill: #e5e7eb !important;
-    stroke: #e5e7eb !important;
-  }
-
-  /* Desktop: language select visible */
-  header select, .navbar select, .site-header select {
-    background: rgba(255,255,255,0.12) !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255,255,255,0.25) !important;
-  }
-
-  header select option, .navbar select option, .site-header select option {
-    background: #111827 !important;
-    color: #ffffff !important;
-  }
-}
-
-  /* Mobile: language dropdown MUST be dark text on light bg */
-  header select, .navbar select, .site-header select {
-    background: #ffffff !important;
-    color: #111827 !important;
-    border: 1px solid rgba(0,0,0,0.15) !important;
-  }
-
-  header select option, .navbar select option, .site-header select option {
-    background: #ffffff !important;
-    color: #111827 !important;
-  }
-
-  /* If your mobile language menu is a custom dropdown */
-  header .dropdown-menu, .navbar .dropdown-menu {
-    background: #ffffff !important;
-    color: #111827 !important;
-    border: 1px solid rgba(0,0,0,0.12) !important;
-  }
-
-  header .dropdown-menu a, .navbar .dropdown-menu a {
-    color: #111827 !important;
-  }
-}
-</style>
-<style>
-/* =========================
-   MOBILE MENU ICON COLOR OVERRIDE
-   ========================= */
-@media (max-width: 768px){
-  /* ONLY icons inside the slide-out menu */
-  #mainNav img,
-  #mainNav svg,
-  #mainNav i{
-    filter: none !important;      /* cancel invert */
-    color: #111827 !important;    /* dark text */
-    fill: #111827 !important;     /* svg */
-    stroke: #111827 !important;
-    opacity: 1 !important;
-  }
-}
-</style>
-<style>
-/* =========================
-   MOBILE MENU (slide in / out)
-   ========================= */
-@media (max-width: 768px){
-
-  #mainNav{
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    height: 100vh !important;
-
-    width: 55vw !important;
-    max-width: 280px !important;
-
-    background: #ffffff !important;
-    z-index: 10000 !important;
-
-    /* animation */
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
-    will-change: transform;
-
-    display: block !important; /* keep visible for animation */
-  }
-
-  #mainNav.show,
-  #mainNav.active,
-  #mainNav.open{
-    transform: translateX(0);
-  }
-}
-</style>
-<style>
-/* ===== overflow-x protection (keep sticky working) ===== */
-html, body{
-  max-width: 100%;
-  overflow-x: clip;
-}
-
-/* fallback if clip not supported */
-@supports not (overflow: clip){
-  html, body{ overflow-x: hidden; }
-}
-</style>
-<style>
-/* =========================
-   FOOTER REVEAL (SAFE)
-   - footer stays visible if JS fails
-   - reveal only once (JS disconnect)
-   ========================= */
-
-/* default: footer visible */
-footer#contact{
-  opacity: 1;
-  transform: none;
-}
-
-/* only hide footer when JS confirms animation is ready */
-.footer-anim-ready footer#contact{
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 700ms ease, transform 700ms ease;
-  will-change: opacity, transform;
-}
-
-/* reveal state */
-.footer-anim-ready footer#contact.footer-reveal{
-  opacity: 1;
-  transform: translateY(0);
-}
-</style>
-
-  
+  <link href="css/index.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="<?= htmlspecialchars($company['logo']) ?>" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-  <?= $company['header_script'] ?? '' ?> <!-- 这里插入 Header Script -->
-
-  <!-- 基本 Open Graph 标签 -->
-  <meta property="og:title" content="<?= htmlspecialchars($company['meta_title'] ?: $company['name']) ?>">
+  <?= $company['header_script'] ?? '' ?> <meta property="og:title" content="<?= htmlspecialchars($company['meta_title'] ?: $company['name']) ?>">
   <meta property="og:description" content="<?= htmlspecialchars($company['meta_description']) ?>">
   <meta property="og:image"
     content="<?= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') ?>://<?= htmlspecialchars($domain) ?>/<?= ltrim($company['logo'], '/') ?>">
   <meta property="og:url" content="http://<?= htmlspecialchars($domain) ?>">
   <meta property="og:type" content="website">
+  <style>
+    .blog-section {
+      margin-top: 30px;
+      color: #333;
+    }
+
+    .blog-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .blog-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #222;
+    }
+
+    .blog-subtitle {
+      color: #666;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* ===== Slider Layout ===== */
+    .blog-slider {
+      position: relative;
+      display: flex;
+      align-items: center;
+      /* padding: 0 50px; */
+    }
+
+    .blog-track-container {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .blog-track {
+      display: flex;
+      transition: transform 0.4s ease;
+      gap: 20px;
+    }
+
+    .blog-card {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 10px;
+      flex: 0 0 calc(33.333% - 14px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .blog-image img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .blog-content {
+      padding: 14px;
+    }
+
+    .blog-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 8px;
+    }
+
+    .blog-excerpt {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .blog-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .blog-readmore {
+      color: #0073aa;
+      text-decoration: none;
+    }
+
+    .blog-readmore:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== Buttons ===== */
+    .blog-slider-btn {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #333;
+      border: 2px solid #ddd;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: all 0.3s ease;
+      z-index: 5;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .blog-slider-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: #000;
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .blog-slider-btn.prev {
+      left: 10px;
+    }
+
+    .blog-slider-btn.next {
+      right: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .blog-card {
+        flex: 0 0 100%;
+      }
+    }
+  </style>
 </head>
 
-<body style="max-width:100%;">
-  <?= $company['body_script'] ?? '' ?> <!-- 这里插入 Body Script -->
-
-  <?php 
-  // 1. Turn on "recording" mode. Nothing prints to the screen yet.
-  ob_start();
-  
-  // 2. Load the original header file.
-  include __DIR__ . '/../header.php'; 
-  
-  // 3. Stop recording and save everything into a variable called $header_content.
-  $header_content = ob_get_clean();
-  
-  // 4. Search for the link to "header.css" and replace it with nothing (delete it).
-  // This removes the V3 styling that is breaking your design.
-  $header_content = preg_replace('/<link[^>]+header\.css[^>]*>/i', '', $header_content);
-  
-  // 5. Finally, print the cleaned-up header to the screen.
-  echo $header_content; 
-  ?>
+<body>
+  <?= $company['body_script'] ?? '' ?> <?php include('header.php') ?>
   <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
-  <div id="pageContent" style="max-width:100%;">
+  <div id="pageContent">
 
     <?php if (!empty($company['banners'])): ?>
-  <div class="banner-slider" data-aos="fade-in"
-       style="height:<?= $heroHeight ?? '100vh' ?>; border-radius:0; width:100%; overflow:hidden; position:relative;">
-
-    <div class="banner-slides" style="width:100%; height:100%; position:relative; overflow:hidden;">
-      <?php foreach ($company['banners'] as $index => $banner): ?>
-        <div class="banner-slide<?= $index === 0 ? ' active' : '' ?>"
-             style="position:absolute; inset:0; width:100%; height:100%; <?= $index === 0 ? 'display:block;' : 'display:none;' ?>">
-          <img src="<?= htmlspecialchars($banner) ?>" alt="Banner Image"
-               style="display:block; width:100%; height:100%; object-fit:cover; border-radius:0;">
+      <div class="banner-slider" data-aos="fade-in">
+        <div class="banner-slides">
+          <?php foreach ($company['banners'] as $index => $banner): ?>
+            <div class="banner-slide<?= $index === 0 ? ' active' : '' ?>" data-aos="fade-up">
+              <img src="<?= htmlspecialchars($banner) ?>" alt="Banner Image">
+            </div>
+          <?php endforeach; ?>
         </div>
-      <?php endforeach; ?>
-    </div>
-
-    <!-- keep dots for JS, but hide them -->
-    <div class="banner-dots" style="display:none;">
-      <?php foreach ($company['banners'] as $index => $banner): ?>
-        <span class="dot<?= $index === 0 ? ' active' : '' ?>" data-slide="<?= $index ?>"></span>
-      <?php endforeach; ?>
-    </div>
-
-  </div>
-<?php endif; ?>
-
-
-    <!-- Editorial Intro (Option C) -->
-<section class="section" style="padding-top:28px; padding-bottom:28px;">
-  <div class="main-content" style="max-width:980px; margin:0 auto; text-align:left;">
-    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:18px; flex-wrap:wrap;">
-      <h1 style="margin:0; font-size:clamp(26px,3.6vw,44px); line-height:1.1; color:#111827;">
-        <?= htmlspecialchars($company['name']) ?>
-      </h1>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a href="#features-full-width" style="padding:10px 14px; border-radius:999px; background:#111827; color:#fff; font-weight:600; text-decoration:none;">
-          Explore
-        </a>
-        <a href="#contact" style="padding:10px 14px; border-radius:999px; border:1px solid rgba(0,0,0,0.15); background:#fff; font-weight:600; text-decoration:none; color:#111827;">
-          Contact
-        </a>
+        <?php if (!empty($company['banner_caption'])): ?>
+          <div id="banner-caption">
+            <h2><?= ($company['banner_caption']) ?></h2>
+          </div>
+        <?php endif; ?>
+        <div class="banner-dots">
+          <?php foreach ($company['banners'] as $index => $banner): ?>
+            <span class="dot<?= $index === 0 ? ' active' : '' ?>" data-slide="<?= $index ?>"></span>
+          <?php endforeach; ?>
+        </div>
       </div>
-    </div>
-
-    <?php if (!empty($company['banner_caption'])): ?>
-      <p style="margin:12px 0 0; color:#374151; font-size:15px;">
-        <?= ($company['banner_caption']) ?>
-      </p>
     <?php endif; ?>
-
-    <?php if (!empty($company['meta_description'])): ?>
-      <p style="margin:10px 0 0; color:#6b7280; font-size:14px; line-height:1.8;">
-        <?= htmlspecialchars($company['meta_description']) ?>
-      </p>
-    <?php endif; ?>
-  </div>
-</section>
-
-<?php if (isSectionActive('about', $sectionStatus)): ?>
+    
+    <div class="main-content">
+        
+      <?php if (isSectionActive('about', $sectionStatus)): ?>
         <section id="about" class="section about-wrapper" data-aos="fade-up">
           <div class="about-left" data-aos="fade-right">
             <h2><?= $company['about_title'] ?></h2>
-            <div class="about-description">
-                <?php 
-                $desc = $company['about_description'];
-    
-                // 1. Remove paragraphs that contain only a "non-breaking space" (The usual culprit)
-                $desc = str_replace('<p>&nbsp;</p>', '', $desc);
-    
-                // 2. Remove paragraphs that contain only a line break
-                $desc = str_replace('<p><br></p>', '', $desc);
-    
-                // 3. Remove standard empty paragraphs
-                $desc = preg_replace('/<p>\s*<\/p>/', '', $desc);
-    
-                echo $desc; 
-                ?>
-            </div>
+            <div><?= $company['about_description'] ?></div>
           </div>
           <?php if (!empty($company['about_image'])): ?>
             <div class="about-right" data-aos="fade-left">
@@ -613,166 +401,29 @@ footer#contact{
         </div>
       <?php endif; ?>
 
-<div class="main-content">
-    
-    <!-- Editorial break -->
-<section class="section" style="padding-top:100px; padding-bottom:0px;">
-  <div class="main-content" style="max-width:920px; margin:0 auto; text-align:left;">
-  </div>
-</section>
-      
-<?php if (isSectionActive('features', $sectionStatus)): ?>
-    </div> 
-
-    <style>
-      #features-full-width {
-        width: 100%;
-        background-color: #ffffff; /* White background extends to edges */
-        padding: 80px 0;
-        /* Optional: Add a top border if you want a subtle separation from the section above */
-        /* border-top: 1px solid #f3f4f6; */
-      }
-      
-      .features-container-inner {
-        max-width: 1280px; /* Keep content aligned with the rest of the site */
-        margin: 0 auto;
-        padding: 0 24px;
-        display: grid;
-        gap: 60px;
-        grid-template-columns: 1fr; 
-      }
-
-      /* Desktop: Split Layout (Title Left, Content Right) */
-      @media (min-width: 992px) {
-        .features-container-inner {
-          grid-template-columns: 320px 1fr; 
-          gap: 80px;
-          align-items: start;
-        }
-        .features-left {
-          position: sticky;
-          top: 120px;
-        }
-      }
-
-      /* Title Styling */
-      .features-left h2 {
-        font-size: clamp(2.2rem, 5vw, 3rem);
-        font-weight: 800;
-        color: #111;
-        margin: 0;
-        line-height: 1.1;
-      }
-      
-      /* The black line above the title */
-      .title-line-accent {
-        width: 60px;
-        height: 5px;
-        background-color: #111827;
-        margin-bottom: 24px;
-      }
-
-      /* Right Side Grid */
-      .features-right-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 50px;
-        row-gap: 70px;
-      }
-
-      /* Individual Feature Item */
-      .feature-item-clean {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      /* Icon Styling */
-      .feature-icon-circle {
-        width: 100px;
-        height: 100px;
-        background: #f9fafb; /* Light grey circle */
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-        transition: background 0.3s ease;
-      }
-      
-      /* Hover Effect */
-      .feature-item-clean:hover .feature-icon-circle {
-        background: #111827; /* Dark on hover */
-      }
-      .feature-item-clean:hover .feature-icon-circle img {
-        filter: brightness(0) invert(1); /* White icon on hover */
-      }
-      
-      .feature-icon-circle img {
-        width: 48px;
-        height: 48px;
-        object-fit: contain;
-        transition: filter 0.3s ease;
-      }
-
-      .feature-item-clean h3 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #111;
-        margin-bottom: 12px;
-      }
-
-      .feature-item-clean p {
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #6b7280;
-        margin: 0;
-      }
-    </style>
-
-    <div id="features"></div>
-    <section id="features-full-width">
-      <div class="features-container-inner">
-        
-        <div class="features-left" data-aos="fade-right">
-          <div class="title-line-accent"></div>
-          <h2><?= strip_tags($company['features_title']) ?></h2>
+      <?php if (isSectionActive('features', $sectionStatus)): ?>
+        <section id="features" class="section" data-aos="zoom-in">
+          <h2><?= $company['features_title'] ?></h2>
+          <div class="features-grid">
+            <?php foreach ($company['features'] as $index => $f): ?>
+              <?php if (!empty($f['title']) || !empty($f['description']) || !empty($f['icon'])): ?>
+                <div class="feature-box" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
+                  <?php if (!empty($f['icon'])): ?>
+                    <img src="<?= htmlspecialchars($f['icon']) ?>" alt="Icon" class="box-icon">
+                  <?php endif; ?>
+                  <h3><?= $f['title'] ?></h3>
+                  <p><?= $f['description'] ?></p>
+                </div>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </div>
+        </section>
+        <div id="features-carousel" data-aos="fade-up">
+          <?php renderCarousel('features', $carousels, $cslides); ?>
         </div>
+      <?php endif; ?>
 
-        <div class="features-right-grid">
-          <?php foreach ($company['features'] as $index => $f): ?>
-            <?php if (!empty($f['title']) || !empty($f['description'])): ?>
-              <div class="feature-item-clean" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                <?php if (!empty($f['icon'])): ?>
-                  <div class="feature-icon-circle">
-                    <img src="<?= htmlspecialchars($f['icon']) ?>" alt="Icon">
-                  </div>
-                <?php endif; ?>
-                <h3><?= $f['title'] ?></h3>
-                <p><?= $f['description'] ?></p>
-              </div>
-            <?php endif; ?>
-          <?php endforeach; ?>
-        </div>
-
-      </div>
-    </section>
-
-    <div id="features-carousel" data-aos="fade-up">
-      <?php renderCarousel('features', $carousels, $cslides); ?>
-    </div>
-
-    <div class="main-content">
-<?php endif; ?>
-
-
-      <!-- Editorial break -->
-<section class="section" style="padding-top:0px; padding-bottom:0px;">
-  <div class="main-content" style="max-width:920px; margin:0 auto; text-align:left;">
-  </div>
-</section>
-
-<?php if (isSectionActive('provide', $sectionStatus)): ?>
+      <?php if (isSectionActive('provide', $sectionStatus)): ?>
         <section id="provide" class="section" data-aos="fade-up">
           <div class="provide-wrapper">
             <div class="provide-left" data-aos="fade-right">
@@ -799,19 +450,7 @@ footer#contact{
         </div>
       <?php endif; ?>
 
-      <!-- Editorial break -->
-<section class="section" style="padding-top:0px; padding-bottom:0px;">
-  <div class="main-content" style="max-width:920px; margin:0 auto; text-align:left;">
-  </div>
-</section>
-
-      <!-- Editorial break -->
-<section class="section" style="padding-top:0px; padding-bottom:20px;">
-  <div class="main-content" style="max-width:920px; margin:0 auto; text-align:left;">
-  </div>
-</section>
-
-<?php if (isSectionActive('gallery', $sectionStatus)): ?>
+      <?php if (isSectionActive('gallery', $sectionStatus) && !empty($company['gallery'])): ?>
         <section id="gallery" class="section gallery-section" data-aos="fade-up">
           <h2><?= $company['gallery_title'] ?></h2>
           <div class="gallery-grid">
@@ -827,7 +466,6 @@ footer#contact{
             <?php renderCarousel('gallery', $carousels, $cslides); ?>
           </div>
         </section>
-        <!-- GLightbox JS -->
         <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
         <script>
           const lightbox = GLightbox({
@@ -851,8 +489,7 @@ footer#contact{
                 <div class="video-thumb">
                   <?php if (!empty($video['video_link'])): ?>
                     <iframe src="<?= htmlspecialchars($video['video_link']) ?>" allowfullscreen></iframe>
-                    <!--<iframe src="<?= htmlspecialchars(!empty($video['video_link']) ? $video['video_link'] : $video['video_file']) ?>" allowfullscreen></iframe>-->
-                  <?php elseif (!empty($video['video_file'])): ?>
+                    <?php elseif (!empty($video['video_file'])): ?>
                     <video controls height="200">
                       <source src="<?= htmlspecialchars($video['video_file']) ?>" type="video/mp4">
                       <source src="<?= htmlspecialchars($video['video_file']) ?>" type="video/webm">
@@ -916,10 +553,7 @@ footer#contact{
             <button class="blog-slider-btn next">›</button>
           </div>
 
-          <!-- <div class="blog-viewall" data-aos="fade-up">
-            <a href="blogs.php?lang=<?= $language_id ?>" class="btn-viewall">View All Articles</a>
-          </div> -->
-        </section>
+          </section>
 
       <?php endif; ?>
 
@@ -959,9 +593,9 @@ footer#contact{
         </section>
       <?php endif; ?>
 
-      <a href="https://wa.me/60123456789" target="_blank" class="whatsapp-float">
-        <img src="img/contact.png" alt="WhatsApp">
-        </a>
+      <div class="social-toggle" onclick="toggleSocials()" data-aos="fade-left">
+        <img src="img/contact.png">
+      </div>
 
       <div class="social-buttons" id="socialButtons">
         <?php foreach ($company['socials'] as $social): ?>
@@ -973,106 +607,16 @@ footer#contact{
         <?php endforeach; ?>
       </div>
     </div>
-    <?php 
-        // 1. Turn on recording mode.
-        ob_start();
-  
-        // 2. Load the original footer file.
-        include __DIR__ . '/../footer.php'; 
-  
-        // 3. Save the footer content into a variable.
-        $footer_content = ob_get_clean();
-  
-        // 4. Search for the link to "footer.css" and delete it.
-        $footer_content = preg_replace('/<link[^>]+footer\.css[^>]*>/i', '', $footer_content);
-  
-        // 5. Print the cleaned-up footer.
-        echo $footer_content; 
-    ?>
+    <?php include('footer.php') ?>
   </div>
-  
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const footerNav = document.querySelector(".footer-nav");
-  if (!footerNav) return;
-
-  const featuresLink = footerNav.querySelector('a[href="#features"]');
-  const servicesLink = footerNav.querySelector('a[href="#provide"]');
-
-  // 1) Fix order: Features BEFORE Services
-  if (featuresLink && servicesLink) {
-    servicesLink.parentNode.insertBefore(featuresLink, servicesLink);
-  }
-
-  // Helper: find the real "Why Choose Us" section by heading text
-  function findFeaturesSection() {
-    // Try to find a heading that matches the link text (most reliable)
-    const linkText = (featuresLink?.textContent || "").trim().toLowerCase(); // "why choose us"
-    const headings = Array.from(document.querySelectorAll("h1,h2,h3"));
-
-    // Find heading that includes "why choose us" (or similar)
-    let h = headings.find(x => (x.textContent || "").trim().toLowerCase().includes(linkText));
-
-    // Fallback keywords if your heading isn't exactly the same text
-    if (!h) {
-      const keywords = ["why choose us", "why choose", "choose us", "features"];
-      h = headings.find(x => keywords.some(k => (x.textContent || "").trim().toLowerCase().includes(k)));
-    }
-
-    if (!h) return null;
-
-    // Scroll to the closest section/container around that heading
-    return h.closest("section") || h.closest("div") || h;
-  }
-
-  // 2) Force scroll (prevent hijack) — and create anchor on the correct section
-  if (featuresLink) {
-    featuresLink.addEventListener("click", function (e) {
-      e.preventDefault();
-
-      // If a real #features exists, use it
-      let target = document.getElementById("features");
-
-      // Otherwise locate the actual section by heading and pin an anchor there
-      if (!target) {
-        const section = findFeaturesSection();
-        if (section) {
-          // Create an anchor just before the section (or inside it)
-          target = document.createElement("div");
-          target.id = "features";
-          target.style.position = "relative";
-          section.parentNode.insertBefore(target, section);
-        }
-      }
-
-      // Finally scroll
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth" });
-      }
-    });
-  }
-});
-</script>
-
-
-<!-- Floating contact button JS -->
-  <script>
-    function toggleSocials() {
-      const socials = document.getElementById('socialButtons');
-      socials.classList.toggle('active');
-    }
-  </script>
 </body>
 
-<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
   AOS.init({
-    once: false,        // re-animate every time
-    mirror: true,       // animate again when scrolling up
     duration: 800,
-    easing: 'ease-out-cubic'
+    once: true
   });
 
   function toggleSocials() {
@@ -1111,31 +655,6 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.textContent = btn.classList.contains("active") ? "❤️" : "♡";
       });
     });
-  });
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const footer = document.querySelector("footer#contact");
-  if (!footer) return;
-
-  // enable animation mode only when JS is running
-  document.documentElement.classList.add("footer-anim-ready");
-
-  const obs = new IntersectionObserver((entries) => {
-    if (entries.some(e => e.isIntersecting)) {
-      footer.classList.add("footer-reveal");
-      obs.disconnect(); // ✅ reveal only once
-    }
-  }, { threshold: 0.15 });
-
-  obs.observe(footer);
-});
-</script>
-
-<script>
-  window.addEventListener('scroll', function () {
-    AOS.refresh();
   });
 </script>
 
@@ -1218,7 +737,6 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       // --- Touch/Swipe Handlers ---
-      // --- Touch/Swipe Handlers ---
       container.addEventListener("touchstart", (e) => {
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
@@ -1265,7 +783,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 </script>
 
-<!--stop vids from autoplaying on soft reload-->
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".video-thumb iframe").forEach(iframe => {
@@ -1319,3 +836,4 @@ document.addEventListener("DOMContentLoaded", function () {
     updateSlider();
   });
 </script>
+</html>
