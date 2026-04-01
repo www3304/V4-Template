@@ -197,643 +197,491 @@ function renderCarousel($sectionName, $carousels, $cslides)
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title><?= $company['meta_title'] ?: $company['name'] ?></title>
-  <meta name="description" content="<?= $company['meta_description'] ?>">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <link href="css/index.css" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="<?= htmlspecialchars($company['logo']) ?>" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
-  <?= $company['header_script'] ?? '' ?> <meta property="og:title" content="<?= htmlspecialchars($company['meta_title'] ?: $company['name']) ?>">
-  <meta property="og:description" content="<?= htmlspecialchars($company['meta_description']) ?>">
-  <meta property="og:image"
-    content="<?= (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') ?>://<?= htmlspecialchars($domain) ?>/<?= ltrim($company['logo'], '/') ?>">
-  <meta property="og:url" content="http://<?= htmlspecialchars($domain) ?>">
-  <meta property="og:type" content="website">
-  <style>
-    .blog-section {
-      margin-top: 30px;
-      color: #333;
-    }
-
-    .blog-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .blog-title {
-      font-size: 22px;
-      font-weight: 600;
-      color: #222;
-    }
-
-    .blog-subtitle {
-      color: #666;
-      font-size: 14px;
-      margin-top: 4px;
-    }
-
-    /* ===== Slider Layout ===== */
-    .blog-slider {
-      position: relative;
-      display: flex;
-      align-items: center;
-      /* padding: 0 50px; */
-    }
-
-    .blog-track-container {
-      overflow: hidden;
-      width: 100%;
-    }
-
-    .blog-track {
-      display: flex;
-      transition: transform 0.4s ease;
-      gap: 20px;
-    }
-
-    .blog-card {
-      background: #fff;
-      border: 1px solid #eaeaea;
-      border-radius: 10px;
-      flex: 0 0 calc(33.333% - 14px);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
-      overflow: hidden;
-      transition: transform 0.2s;
-    }
-
-    .blog-card:hover {
-      transform: translateY(-4px);
-    }
-
-    .blog-image img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-
-    .blog-content {
-      padding: 14px;
-    }
-
-    .blog-card-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #111;
-      margin-bottom: 8px;
-    }
-
-    .blog-excerpt {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
-    }
-
-    .blog-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-    }
-
-    .blog-readmore {
-      color: #0073aa;
-      text-decoration: none;
-    }
-
-    .blog-readmore:hover {
-      text-decoration: underline;
-    }
-
-    /* ===== Buttons ===== */
-    .blog-slider-btn {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: #333;
-      border: 2px solid #ddd;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      cursor: pointer;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      transition: all 0.3s ease;
-      z-index: 5;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .blog-slider-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      color: #000;
-      transform: translateY(-50%) scale(1.1);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .blog-slider-btn.prev {
-      left: 10px;
-    }
-
-    .blog-slider-btn.next {
-      right: 10px;
-    }
-
-    @media (max-width: 768px) {
-      .blog-card {
-        flex: 0 0 100%;
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <?= $company['body_script'] ?? '' ?> <?php include('header.php') ?>
-  <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
-  <div id="pageContent">
-
-    <?php if (!empty($company['banners'])): ?>
-      <div class="banner-slider" data-aos="fade-in">
-        <div class="banner-slides">
-          <?php foreach ($company['banners'] as $index => $banner): ?>
-            <div class="banner-slide<?= $index === 0 ? ' active' : '' ?>" data-aos="fade-up">
-              <img src="<?= htmlspecialchars($banner) ?>" alt="Banner Image">
-            </div>
-          <?php endforeach; ?>
-        </div>
-        <?php if (!empty($company['banner_caption'])): ?>
-          <div id="banner-caption">
-            <h2><?= ($company['banner_caption']) ?></h2>
-          </div>
-        <?php endif; ?>
-        <div class="banner-dots">
-          <?php foreach ($company['banners'] as $index => $banner): ?>
-            <span class="dot<?= $index === 0 ? ' active' : '' ?>" data-slide="<?= $index ?>"></span>
-          <?php endforeach; ?>
-        </div>
-      </div>
-    <?php endif; ?>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($company['name'] ?? 'Consultation') ?></title>
     
-    <div class="main-content">
-        
-      <?php if (isSectionActive('about', $sectionStatus)): ?>
-        <section id="about" class="section about-wrapper" data-aos="fade-up">
-          <div class="about-left" data-aos="fade-right">
-            <h2><?= $company['about_title'] ?></h2>
-            <div><?= $company['about_description'] ?></div>
-          </div>
-          <?php if (!empty($company['about_image'])): ?>
-            <div class="about-right" data-aos="fade-left">
-              <img src="<?= htmlspecialchars($company['about_image']) ?>" alt="About Image">
-            </div>
-          <?php endif; ?>
-        </section>
-        <div id="about-carousel" data-aos="fade-up">
-          <?php renderCarousel('about', $carousels, $cslides); ?>
-        </div>
-      <?php endif; ?>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
-      <?php if (isSectionActive('features', $sectionStatus)): ?>
-        <section id="features" class="section" data-aos="zoom-in">
-          <h2><?= $company['features_title'] ?></h2>
-          <div class="features-grid">
-            <?php foreach ($company['features'] as $index => $f): ?>
-              <?php if (!empty($f['title']) || !empty($f['description']) || !empty($f['icon'])): ?>
-                <div class="feature-box" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                  <?php if (!empty($f['icon'])): ?>
-                    <img src="<?= htmlspecialchars($f['icon']) ?>" alt="Icon" class="box-icon">
-                  <?php endif; ?>
-                  <h3><?= $f['title'] ?></h3>
-                  <p><?= $f['description'] ?></p>
-                </div>
-              <?php endif; ?>
-            <?php endforeach; ?>
-          </div>
-        </section>
-        <div id="features-carousel" data-aos="fade-up">
-          <?php renderCarousel('features', $carousels, $cslides); ?>
-        </div>
-      <?php endif; ?>
+    <style>
+      /* --- V4 RESET & VARIABLES --- */
+      :root {
+        --bg-white: #ffffff;
+        --text-dark: #111827;
+        --text-muted: #6b7280;
+        --border-light: rgba(0, 0, 0, 0.05);
+        --radius-lg: 24px;
+        --nav-glass: rgba(255, 255, 255, 0.85);
+      }
 
-      <?php if (isSectionActive('provide', $sectionStatus)): ?>
-        <section id="provide" class="section" data-aos="fade-up">
-          <div class="provide-wrapper">
-            <div class="provide-left" data-aos="fade-right">
-              <h2><?= $company['provide_title'] ?></h2>
-              <div><?= $company['provide_text'] ?></div>
-            </div>
-            <div class="provide-right">
-              <div class="provide-grid">
-                <?php foreach ($company['provide'] as $index => $item): ?>
-                  <div class="provide-box" data-aos="fade-up" data-aos-delay="<?= $index * 100 ?>">
-                    <?php if (!empty($item['icon'])): ?>
-                      <img src="<?= htmlspecialchars($item['icon']) ?>" alt="Icon" class="box-icon">
-                    <?php endif; ?>
-                    <h3><?= $item['title'] ?></h3>
-                    <p><?= $item['description'] ?></p>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div id="provide-carousel" data-aos="fade-up">
-          <?php renderCarousel('provide', $carousels, $cslides); ?>
-        </div>
-      <?php endif; ?>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-white);
+        color: var(--text-dark);
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
 
-      <?php if (isSectionActive('gallery', $sectionStatus) && !empty($company['gallery'])): ?>
-        <section id="gallery" class="section gallery-section" data-aos="fade-up">
-          <h2><?= $company['gallery_title'] ?></h2>
-          <div class="gallery-grid">
-            <?php foreach ($company['gallery'] as $gallery): ?>
-              <a href="<?= htmlspecialchars($gallery['image_path']) ?>" class="glightbox" data-gallery="company-gallery"
-                data-width="900px" data-height="600px" data-description="<?= $gallery['caption'] ?? '' ?>"
-                data-aos="zoom-in">
-                <img src="<?= htmlspecialchars($gallery['image_path']) ?>" alt="Gallery Image">
-              </a>
-            <?php endforeach; ?>
-          </div>
-          <div id="gallery-carousel" data-aos="fade-up">
-            <?php renderCarousel('gallery', $carousels, $cslides); ?>
-          </div>
-        </section>
-        <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
-        <script>
-          const lightbox = GLightbox({
-            selector: '.glightbox',
-            loop: true,
-            touchNavigation: true,
-            closeButton: true,
-            zoomable: true,
-            autoplayVideos: false
-          });
-        </script>
-      <?php endif; ?>
+      h1, h2, h3, h4 {
+        letter-spacing: -0.02em;
+        font-weight: 700;
+        margin-top: 0;
+      }
 
-      <?php if (isSectionActive('video', $sectionStatus) && !empty($company['videos'])): ?>
-        <section id="video" class="section" data-aos="fade-up">
-          <h2><?= $company['video_title'] ?></h2>
+      p { margin-top: 0; }
 
-          <div class="video-section">
-            <?php foreach ($company['videos'] as $index => $video): ?>
-              <div class="video-item" data-aos="fade-in" data-aos-delay="<?= $index * 100 ?>">
-                <div class="video-thumb">
-                  <?php if (!empty($video['video_link'])): ?>
-                    <iframe src="<?= htmlspecialchars($video['video_link']) ?>" allowfullscreen></iframe>
-                    <?php elseif (!empty($video['video_file'])): ?>
-                    <video controls height="200">
-                      <source src="<?= htmlspecialchars($video['video_file']) ?>" type="video/mp4">
-                      <source src="<?= htmlspecialchars($video['video_file']) ?>" type="video/webm">
-                      <source src="<?= htmlspecialchars($video['video_file']) ?>" type="video/ogg">
-                      Your browser does not support the video tag.
-                    </video>
-                  <?php endif; ?>
-                </div>
-                <div class="video-content">
-                  <h3><?= htmlspecialchars($video['title']) ?></h3>
-                  <div class="video-meta">
-                    <span><?= date('d M Y', strtotime($video['date'])) ?></span>
-                    <button type="button" class="video-fav-btn">♡</button>
-                  </div>
-                </div>
-              </div>
-            <?php endforeach; ?>
-          </div>
-        </section>
-        <div id="videos-carousel" data-aos="fade-up">
-          <?php renderCarousel('video', $carousels, $cslides); ?>
-        </div>
-      <?php endif; ?>
+      /* --- CENTERED STICKY NAV --- */
+      .glass-nav {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 1000px;
+        background: var(--nav-glass);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--border-light);
+        border-radius: 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 40px;
+        z-index: 99999;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      }
 
-      <?php if (isSectionActive('blog', $sectionStatus) && !empty($company['blogs'])): ?>
-        <section id="blog" class="section blog-section" data-aos="fade-up">
-          <div class="blog-header">
-            <h2 class="blog-title"><?= ($company['blog_title'] ?? 'Latest News & Insights') ?></h2>
-            <p class="blog-subtitle">
-              <?= ($company['blog_sub_title'] ?? 'Stay updated with our latest articles and stories.') ?>
-            </p>
-          </div>
+      .nav-group {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+      }
 
-          <div class="blog-slider">
-            <button class="blog-slider-btn prev">‹</button>
-            <div class="blog-track-container">
-              <div class="blog-track">
-                <?php foreach ($company['blogs'] as $blog): ?>
-                  <div class="blog-card">
-                    <div class="blog-image">
-                      <?php if (!empty($blog['image'])): ?>
-                        <img src="<?= 'uploads/blogs/' . htmlspecialchars($blog['image']) ?>"
-                          alt="<?= htmlspecialchars($blog['title']) ?>">
-                      <?php endif; ?>
-                    </div>
-                    <div class="blog-content">
-                      <h3 class="blog-card-title"><?= htmlspecialchars($blog['title']) ?></h3>
-                      <p class="blog-excerpt">
-                        <?= htmlspecialchars(mb_strimwidth(strip_tags($blog['content']), 0, 120, '...')) ?>
-                      </p>
-                      <div class="blog-meta">
-                        <span class="blog-date"><?= date('d M Y', strtotime($blog['created_at'])) ?></span>
-                        <a href="blog.php?id=<?= $blog['id'] ?>&lang=<?= $language_id ?>" class="blog-readmore">Read More
-                          →</a>
-                      </div>
-                    </div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-            </div>
-            <button class="blog-slider-btn next">›</button>
-          </div>
+      .nav-logo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: center;
+      }
 
-          </section>
+      .nav-logo img {
+        height: 45px;
+        object-fit: contain;
+      }
 
-      <?php endif; ?>
+      .glass-nav a {
+        text-decoration: none;
+        color: var(--text-dark);
+        font-weight: 500;
+        font-size: 15px;
+        transition: opacity 0.2s;
+      }
 
-      <?php if (!empty($company['pdfs'])): ?>
-        <section id="pdf" class="section pdf-section" data-aos="fade-up">
-          <h2><?= ($company['pdf_title'] ?? 'PDF Files') ?></h2>
-          <div class="pdf-list">
-            <?php foreach ($company['pdfs'] as $pdf): ?>
-              <div class="pdf-item" data-aos="fade-up">
-                <h3><?= htmlspecialchars($pdf['title']) ?></h3>
-                <embed src="<?= htmlspecialchars($pdf['pdf_file']) ?>" type="application/pdf" class="pdf-preview" />
-                <a href="<?= htmlspecialchars($pdf['pdf_file']) ?>" download class="pdf-download-btn">
-                  Download PDF ↓
-                </a>
-              </div>
-            <?php endforeach; ?>
-          </div>
-        </section>
-      <?php endif; ?>
+      .glass-nav a:hover { opacity: 0.6; }
 
-      <?php if (isSectionActive('address', $sectionStatus) && !empty($company['address'])): ?>
-        <section id="map-review" class="section map-review-section" data-aos="fade-up">
-          <div class="map-container" data-aos="zoom-in">
-            <iframe width="100%" height="400" style="border:0;" loading="lazy" allowfullscreen
-              referrerpolicy="no-referrer-when-downgrade"
-              src="https://www.google.com/maps?q=<?= urlencode($company['address']) ?>&output=embed">
-            </iframe>
-          </div>
-          <?php if (($sectionStatus['address'] ?? '') !== 'map-only'): ?>
-            <div class="map-link" style="margin-top:15px; text-align:center;">
-              <a href="https://www.google.com/maps/search/?api=1&query=<?= urlencode($company['address']) ?>"
-                target="_blank" style="color:#0066cc; font-weight:bold;">
-                👉 Check comments on Google Maps
-              </a>
-            </div>
-          <?php endif; ?>
-        </section>
-      <?php endif; ?>
+      /* --- HERO SECTION --- */
+      .hero-section {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
 
-      <div class="social-toggle" onclick="toggleSocials()" data-aos="fade-left">
-        <img src="img/contact.png">
+      .hero-bg {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        z-index: -2;
+      }
+
+      .hero-overlay {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: -1;
+      }
+
+      .hero-content {
+        text-align: center;
+        color: #ffffff;
+        max-width: 800px;
+        z-index: 1;
+        padding: 20px;
+      }
+
+      .hero-content h1 {
+        font-size: 64px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        line-height: 1.1;
+      }
+
+      .hero-content p {
+        font-size: 18px;
+        opacity: 0.9;
+      }
+
+      /* --- GENERAL SECTIONS --- */
+      section {
+        padding: 120px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .section-header h2 {
+        font-size: 42px;
+        margin-bottom: 15px;
+      }
+
+      .section-header p {
+        color: var(--text-muted);
+        font-size: 18px;
+      }
+
+      /* --- ABOUT US --- */
+      .about-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+      }
+
+      .about-image {
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      }
+
+      .about-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .about-text h2 {
+        font-size: 32px;
+        margin-bottom: 20px;
+      }
+
+      .about-text p {
+        color: var(--text-muted);
+        line-height: 1.8;
+        font-size: 16px;
+      }
+
+      /* --- BENTO GRID --- */
+      .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        grid-auto-rows: minmax(250px, auto);
+      }
+
+      .bento-item {
+        background: #f9fafb;
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        border: 1px solid var(--border-light);
+        transition: transform 0.3s ease, background 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .bento-item:hover {
+        transform: translateY(-5px);
+        background: #ffffff;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+      }
+
+      .bento-item:nth-child(1),
+      .bento-item:nth-child(4) {
+        grid-column: span 2;
+      }
+
+      .bento-icon-small {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        margin-bottom: 20px;
+        font-size: 40px;
+        color: var(--text-dark);
+      }
+
+      .bento-image-large {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      }
+
+      .bento-item p {
+        color: var(--text-muted);
+        line-height: 1.6;
+        font-size: 15px;
+      }
+
+      /* --- VIDEO DEMO & CONTACT --- */
+      .demo-container {
+        background: #111827;
+        border-radius: var(--radius-lg);
+        padding: 80px 40px;
+        text-align: center;
+        color: white;
+      }
+
+      .demo-container h2 { color: white; }
+      .demo-container p { color: #9ca3af; margin-bottom: 40px; }
+
+      .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      }
+
+      .video-wrapper iframe, .video-wrapper video {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        border: 0;
+      }
+
+      .footer-section {
+        background: #ffffff;
+        border-top: 1px solid var(--border-light);
+        padding: 80px 20px 40px;
+        margin-top: 50px;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* --- WHATSAPP FLOAT --- */
+      .whatsapp-float {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background-color: #25d366;
+        border-radius: 50%;
+        box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: pulse-wa 2s infinite;
+        transition: transform 0.3s;
+      }
+
+      .whatsapp-float:hover { transform: scale(1.1); }
+      .whatsapp-float img { width: 32px; height: 32px; filter: brightness(0) invert(1); }
+
+      @keyframes pulse-wa {
+        0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+        70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+      }
+
+      /* --- MOBILE RESPONSIVENESS --- */
+      @media (max-width: 768px) {
+        .nav-group { display: none; }
+        .about-container, .footer-grid { grid-template-columns: 1fr; }
+        .bento-grid { grid-template-columns: 1fr; }
+        .bento-item:nth-child(1), .bento-item:nth-child(4) { grid-column: span 1; }
+        .hero-content h1 { font-size: 40px; }
+      }
+    </style>
+</head>
+<body>
+
+  <nav class="glass-nav" data-aos="fade-down" data-aos-duration="1000">
+    <div class="nav-group">
+      <a href="#home">Home</a>
+      <a href="#about">About Us</a>
+      <a href="#features">Why Choose Us</a>
+    </div>
+    
+    <div class="nav-logo">
+      <img src="<?= htmlspecialchars($company['logo'] ?? '') ?>" alt="<?= htmlspecialchars($company['name'] ?? 'Logo') ?>">
+    </div>
+    
+    <div class="nav-group">
+      <a href="#provide">Services</a>
+      <a href="#video">Demo</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <section id="home" class="hero-section">
+    <?php $bg_video = $company['bg_video'] ?? null; ?>
+    <?php if (!empty($bg_video)): ?>
+      <video class="hero-bg" autoplay loop muted playsinline>
+        <source src="<?= htmlspecialchars($bg_video) ?>" type="video/mp4">
+      </video>
+    <?php elseif (!empty($company['banners'])): ?>
+      <img src="<?= htmlspecialchars($company['banners'][0]) ?>" class="hero-bg" alt="Hero">
+    <?php endif; ?>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content" data-aos="fade-up" data-aos-duration="1200">
+      <h1><?= htmlspecialchars($company['banner_caption'] ?? $company['name']) ?></h1>
+      <p>Consultation & Services designed for the modern era.</p>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="about-container">
+      <div class="about-image" data-aos="fade-right">
+        <img src="<?= !empty($company['gallery']) ? htmlspecialchars($company['gallery'][0]['image_path']) : 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800' ?>" alt="About Us">
       </div>
-
-      <div class="social-buttons" id="socialButtons">
-        <?php foreach ($company['socials'] as $social): ?>
-          <a href="<?= htmlspecialchars($social['link_url']) ?>" target="_blank"
-            class="social-btn <?= strtolower($social['name']) ?>" title="<?= htmlspecialchars($social['name']) ?>"
-            data-aos="zoom-in">
-            <img src="<?= htmlspecialchars($social['icon_path']) ?>" alt="<?= htmlspecialchars($social['name']) ?>">
-          </a>
-        <?php endforeach; ?>
+      <div class="about-text" data-aos="fade-left">
+        <h2>About <?= htmlspecialchars($company['name'] ?? 'Us') ?></h2>
+        <p><?= strip_tags(html_entity_decode($company['description'] ?? 'We provide modern, high-end solutions tailored to elevate your business.')) ?></p>
       </div>
     </div>
-    <?php include('footer.php') ?>
-  </div>
-</body>
+  </section>
 
-<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-<script>
-  AOS.init({
-    duration: 800,
-    once: true
-  });
+  <section id="features">
+    <div class="section-header" data-aos="fade-up">
+      <h2>Why Choose Us</h2>
+      <p>The advantages of working with top-tier professionals.</p>
+    </div>
+    <div class="bento-grid">
+      <?php if (!empty($company['features'])): ?>
+        <?php foreach (array_slice($company['features'], 0, 5) as $feature): ?>
+          <div class="bento-item" data-aos="fade-up">
+            <?php if (!empty($feature['icon'])): ?>
+              <?php if (strpos($feature['icon'], '.') !== false || strpos($feature['icon'], '/') !== false): ?>
+                <img src="<?= htmlspecialchars($feature['icon']) ?>" alt="Icon" class="bento-icon-small">
+              <?php else: ?>
+                <i class="<?= htmlspecialchars($feature['icon']) ?> bento-icon-small"></i>
+              <?php endif; ?>
+            <?php endif; ?>
+            <h4><?= strip_tags(html_entity_decode($feature['title'])) ?></h4>
+            <p><?= strip_tags(html_entity_decode($feature['description'] ?? '')) ?></p>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
+  </section>
 
-  function toggleSocials() {
-    const socials = document.getElementById("socialButtons");
-    socials.classList.toggle("show");
-  }
+  <section id="provide" style="background-color: #fafafa; max-width: 100%; border-radius: 40px; margin-bottom: 50px;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 100px 20px;">
+      <div class="section-header" data-aos="fade-up">
+        <h2>Our Services</h2>
+        <p>Comprehensive solutions for your success.</p>
+      </div>
+      <div class="bento-grid">
+        <?php if (!empty($company['provide'])): ?>
+          <?php foreach (array_slice($company['provide'], 0, 5) as $service): ?>
+            <div class="bento-item" data-aos="fade-up" style="background: #ffffff;">
+              <?php if (!empty($service['icon']) && (strpos($service['icon'], '.') !== false || strpos($service['icon'], '/') !== false)): ?>
+                <img src="<?= htmlspecialchars($service['icon']) ?>" alt="Service" class="bento-image-large">
+              <?php elseif(!empty($service['icon'])): ?>
+                <i class="<?= htmlspecialchars($service['icon']) ?> bento-icon-small"></i>
+              <?php endif; ?>
+              <h4><?= strip_tags(html_entity_decode($service['title'])) ?></h4>
+              <p><?= strip_tags(html_entity_decode($service['text'] ?? '')) ?></p>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
 
-  const slides = document.querySelectorAll('.banner-slide');
-  const dots = document.querySelectorAll('.dot');
-  let currentSlide = 0;
+  <section id="video">
+    <div class="demo-container" data-aos="zoom-in">
+      <h2>Business Demonstration</h2>
+      <p>See how we can transform your workflow.</p>
+      <div class="video-wrapper">
+        <?php if (!empty($company['videos'])): ?>
+          <?= html_entity_decode($company['videos'][0]['iframe_code']) ?>
+        <?php else: ?>
+          <iframe src="https://www.youtube.com/embed/ScMzIvxBSi4?autoplay=0&controls=1" title="Demo Video" allowfullscreen></iframe>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
 
-  function showSlide(index) {
-    slides.forEach((slide, i) => {
-      slide.classList.toggle('active', i === index);
-      dots[i].classList.toggle('active', i === index);
-    });
-    currentSlide = index;
-  }
+  <footer id="contact" class="footer-section">
+    <div class="footer-grid">
+      <div data-aos="fade-right">
+        <h2 style="font-size: 36px; margin-bottom: 20px;">Get in Touch</h2>
+        <p style="color: var(--text-muted); margin-bottom: 30px;">Ready to start your next project? Contact us today for a consultation.</p>
+        
+        <div style="margin-bottom: 15px;">
+          <strong>Email:</strong> <br>
+          <a href="mailto:<?= htmlspecialchars($company['email'] ?? '') ?>" style="color: var(--text-dark); text-decoration: none;"><?= htmlspecialchars($company['email'] ?? '') ?></a>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <strong>Phone:</strong> <br>
+          <a href="tel:<?= htmlspecialchars($company['phone'] ?? '') ?>" style="color: var(--text-dark); text-decoration: none;"><?= htmlspecialchars($company['phone'] ?? '') ?></a>
+        </div>
+        <div>
+          <strong>Address:</strong> <br>
+          <span style="color: var(--text-muted);"><?= nl2br(htmlspecialchars($company['address'] ?? '')) ?></span>
+        </div>
+      </div>
+      
+      <div data-aos="fade-left" style="background: #f9fafb; padding: 40px; border-radius: var(--radius-lg);">
+        <form action="" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
+          <input type="text" placeholder="Your Name" style="padding: 15px; border-radius: 8px; border: 1px solid var(--border-light); font-family: 'Inter', sans-serif;">
+          <input type="email" placeholder="Your Email" style="padding: 15px; border-radius: 8px; border: 1px solid var(--border-light); font-family: 'Inter', sans-serif;">
+          <textarea placeholder="Message" rows="4" style="padding: 15px; border-radius: 8px; border: 1px solid var(--border-light); font-family: 'Inter', sans-serif;"></textarea>
+          <button type="submit" style="background: var(--text-dark); color: white; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </footer>
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const index = parseInt(dot.getAttribute('data-slide'));
-      showSlide(index);
-    });
-  });
-
-  setInterval(() => {
-    let next = (currentSlide + 1) % slides.length;
-    showSlide(next);
-  }, 5000);
-
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".video-fav-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        btn.classList.toggle("active");
-        btn.textContent = btn.classList.contains("active") ? "❤️" : "♡";
-      });
-    });
-  });
-</script>
-
-<script>
-  //carousel
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".carousel-wrapper").forEach(wrapper => {
-      const track = wrapper.querySelector(".carousel-track");
-      const slides = Array.from(track.children);
-      const dotsNav = wrapper.querySelector(".carousel-dots");
-      const container = wrapper.querySelector(".carousel-container");
-
-      let currentIndex = 0;
-      let slidesPerPage = 1;
-      let totalPages = 1;
-
-      let startX = 0;
-      let isDragging = false;
-
-      const getSlidesPerPage = () => {
-        const containerWidth = container.offsetWidth;
-        let totalWidth = 0;
-        let count = 0;
-
-        for (let slide of slides) {
-          const style = getComputedStyle(slide);
-          const margin = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
-          const slideWidth = slide.offsetWidth + margin;
-
-          if (totalWidth + slideWidth <= containerWidth) {
-            totalWidth += slideWidth;
-            count++;
-          } else break;
+  <?php 
+    $whatsapp_url = '';
+    if (!empty($company['socials'])) {
+      foreach ($company['socials'] as $social) {
+        if (strtolower($social['name']) === 'whatsapp') {
+          $whatsapp_url = $social['link_url'];
+          break;
         }
-        return Math.max(count, 1);
-      };
-
-      const buildDots = () => {
-        dotsNav.innerHTML = "";
-        if (totalPages <= 1) return;
-        for (let i = 0; i < totalPages; i++) {
-          const dot = document.createElement("button");
-          if (i === currentIndex) dot.classList.add("active");
-          dotsNav.appendChild(dot);
-          dot.addEventListener("click", () => goToSlide(i));
-        }
-      };
-
-      const updateSlidePosition = () => {
-        const slideWidth = slides[0].offsetWidth +
-          (parseFloat(getComputedStyle(slides[0]).marginLeft) + parseFloat(getComputedStyle(slides[0]).marginRight));
-
-        // normal start index
-        let start = currentIndex * slidesPerPage;
-
-        // if on last page and slide count < max slides allowed, shift start backwards so page is filled
-        if (currentIndex === totalPages - 1 && slides.length % slidesPerPage !== 0) {
-          start = slides.length - slidesPerPage;
-        }
-
-        const shift = start * slideWidth;
-        track.style.transform = `translateX(-${shift}px)`;
-
-        // Update dots
-        dotsNav.querySelectorAll("button").forEach((dot, i) => {
-          dot.classList.toggle("active", i === currentIndex);
-        });
-      };
-
-      const goToSlide = (index) => {
-        currentIndex = Math.max(0, Math.min(index, totalPages - 1));
-        updateSlidePosition();
-      };
-
-      const recalc = () => {
-        slidesPerPage = getSlidesPerPage();
-        totalPages = Math.ceil(slides.length / slidesPerPage);
-        buildDots();
-        goToSlide(currentIndex); // keep current index if possible
-      };
-
-      // --- Touch/Swipe Handlers ---
-      container.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-        isDragging = true;
-      });
-
-      container.addEventListener("touchend", (e) => {
-        if (!isDragging) return;
-        const endX = e.changedTouches[0].clientX;
-        const endY = e.changedTouches[0].clientY;
-
-        const diffX = endX - startX;
-        const diffY = endY - startY;
-
-        // Only treat as swipe if horizontal movement is bigger than vertical
-        if (Math.abs(diffX) > 30 && Math.abs(diffX) > Math.abs(diffY)) {
-          if (diffX < 0) goToSlide(currentIndex + 1);
-          else goToSlide(currentIndex - 1);
-        }
-
-        isDragging = false;
-      });
-
-      window.addEventListener("resize", recalc);
-
-      const images = wrapper.querySelectorAll("img");
-      let loaded = 0;
-      if (images.length) {
-        images.forEach(img => {
-          if (img.complete) {
-            loaded++;
-            if (loaded === images.length) recalc();
-          } else {
-            img.addEventListener("load", () => {
-              loaded++;
-              if (loaded === images.length) recalc();
-            });
-          }
-        });
-      } else {
-        recalc(); // no images
       }
-    });
-  });
-</script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".video-thumb iframe").forEach(iframe => {
-      const src = iframe.src;
-      iframe.src = "";
-      iframe.src = src;
-    });
-  });
-</script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const track = document.querySelector(".blog-track");
-    const cards = document.querySelectorAll(".blog-card");
-    const prev = document.querySelector(".blog-slider-btn.prev");
-    const next = document.querySelector(".blog-slider-btn.next");
-    let index = 0;
-
-    function updateSlider() {
-      const slidesPerView = window.innerWidth <= 768 ? 1 : 3;
-      const cardWidth = cards[0].offsetWidth + 20;
-      const totalCards = cards.length;
-
-      // Hide slider buttons if not enough cards
-      if (totalCards <= slidesPerView) {
-        prev.style.display = "none";
-        next.style.display = "none";
-        track.style.transform = "translateX(0)";
-        return;
-      } else {
-        prev.style.display = "flex";
-        next.style.display = "flex";
-      }
-
-      // Infinite looping
-      index = (index + totalCards) % totalCards;
-      track.style.transition = "transform 0.5s ease";
-      track.style.transform = `translateX(-${index * cardWidth}px)`;
     }
+  ?>
+  <?php if (!empty($whatsapp_url)): ?>
+    <a href="<?= htmlspecialchars($whatsapp_url) ?>" class="whatsapp-float" target="_blank" data-aos="zoom-in" data-aos-delay="500">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+    </a>
+  <?php endif; ?>
 
-    prev.addEventListener("click", () => {
-      index = (index - 1 + cards.length) % cards.length;
-      updateSlider();
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true
     });
-
-    next.addEventListener("click", () => {
-      index = (index + 1) % cards.length;
-      updateSlider();
-    });
-
-    window.addEventListener("resize", updateSlider);
-    updateSlider();
-  });
-</script>
+  </script>
+</body>
 </html>
