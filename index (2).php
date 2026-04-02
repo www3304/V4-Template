@@ -215,6 +215,21 @@ function renderCarousel($sectionName, $carousels, $cslides)
         --radius-lg: 24px;
         --nav-glass: rgba(255, 255, 255, 0.85);
       }
+      
+      /* 限制全局最大宽度并锁死水平溢出 */
+      html, body {
+        max-width: 100%;
+        overflow-x: hidden !important; /* 强制拦截 AOS 动画溢出 */
+        position: relative; /* 关键：把动画元素限制在页面边界内 */
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
 
       body {
         font-family: 'Inter', sans-serif;
@@ -222,7 +237,6 @@ function renderCarousel($sectionName, $carousels, $cslides)
         color: var(--text-dark);
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
       }
 
       h1, h2, h3, h4 {
@@ -237,8 +251,10 @@ function renderCarousel($sectionName, $carousels, $cslides)
       .glass-nav {
         position: fixed;
         top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+  
         width: 90%;
         max-width: 1000px;
         background: var(--nav-glass);
@@ -252,7 +268,7 @@ function renderCarousel($sectionName, $carousels, $cslides)
         padding: 10px 40px;
         z-index: 99999;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      }
+        }
 
       .nav-group {
         display: flex;
@@ -282,11 +298,79 @@ function renderCarousel($sectionName, $carousels, $cslides)
       }
 
       .glass-nav a:hover { opacity: 0.6; }
+      
+      /* --- LANGUAGE DROPDOWN --- */
+      .lang-dropdown {
+        position: relative;
+        display: inline-block;
+        margin-left: 15px;
+        padding-left: 15px;
+        border-left: 1px solid var(--border-light);
+      }
+
+      .lang-dropbtn {
+        background: transparent;
+        color: var(--text-dark);
+        font-weight: 500;
+        font-size: 15px;
+        border: none;
+        cursor: pointer;
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0;
+        transition: opacity 0.2s;
+      }
+
+      .lang-dropbtn:hover {
+        opacity: 0.6;
+      }
+
+      .lang-dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 15px; /* space between nav and dropdown */
+        background-color: #ffffff;
+        min-width: 150px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        z-index: 99999;
+        border: 1px solid var(--border-light);
+      }
+
+      .lang-dropdown-content a {
+        color: var(--text-dark);
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        font-size: 14px;
+        transition: background 0.2s, color 0.2s;
+      }
+
+      .lang-dropdown-content a:hover {
+        background-color: #f3f4f6;
+        opacity: 1 !important; /* override the glass-nav hover */
+      }
+
+      .lang-dropdown-content a.active {
+        font-weight: 700;
+        color: #00b14f; /* Your active color */
+        background-color: #f9fafb;
+      }
+
+      /* Show the dropdown menu on hover */
+      .lang-dropdown:hover .lang-dropdown-content {
+        display: block;
+      }
 
       /* --- HERO SECTION --- */
       .hero-section {
         position: relative;
-        width: 100vw;
+        width: 100%; 
         height: 100vh;
         display: flex;
         align-items: center;
@@ -507,33 +591,135 @@ function renderCarousel($sectionName, $carousels, $cslides)
         100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
       }
 
-      /* --- MOBILE RESPONSIVENESS --- */
-      @media (max-width: 768px) {
-        .nav-group { display: none; }
-        .about-container, .footer-grid { grid-template-columns: 1fr; }
-        .bento-grid { grid-template-columns: 1fr; }
-        .bento-item:nth-child(1), .bento-item:nth-child(4) { grid-column: span 1; }
-        .hero-content h1 { font-size: 40px; }
+      .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--text-dark);
+        cursor: pointer;
+        padding: 5px;
       }
+      
+    /* --- MOBILE RESPONSIVENESS --- */
+    @media (max-width: 768px) {
+    .glass-nav {
+        padding: 12px 20px; /* Slightly reduced padding */
+        width: calc(100% - 40px); /* Keeps exactly 20px space on both sides */
+        max-width: 100%;
+        flex-wrap: wrap; 
+        transition: all 0.4s ease-in-out;
+    }
+
+    .glass-nav.nav-open {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 24px;
+    }
+
+    .nav-logo {
+        position: static;
+        transform: none;
+        margin-right: auto;
+    }
+
+    .hamburger-btn {
+        display: block;
+    }
+
+    /* 1. Setup for Slide Down */
+    .nav-group {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    
+    /* Hide using max-height instead of display: none */
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin: 0;
+        border-top: 1px solid transparent; /* invisible border for transition */
+        transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, padding 0.4s ease-in-out;
+    }
+
+    /* 2. Open State - Slide Down */
+    .glass-nav.nav-open .nav-group {
+        max-height: 400px; /* Expands to fit content */
+        opacity: 1;
+        padding-bottom: 10px;
+    }
+
+    /* 3. Divider line specific to the right group, animated in */
+    .glass-nav.nav-open .nav-group.right-group {
+        border-top: 1px solid var(--border-light);
+        padding-top: 15px;
+        margin-top: 5px;
+    }
+
+    /* Language dropdown mobile fixes */
+    .lang-dropdown {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        width: 100%;
+    }
+  
+    .lang-dropdown-content {
+        position: static;
+        box-shadow: none;
+        border: 1px solid var(--border-light);
+        background: #f9fafb;
+        margin-top: 10px;
+        width: 100%;
+    }
+
+    /* Existing layout grid adjustments */
+    .about-container, .footer-grid, .bento-grid { grid-template-columns: 1fr; }
+    .bento-item:nth-child(1), .bento-item:nth-child(4) { grid-column: span 1; }
+    .hero-content h1 { font-size: 40px; }
+    }
+    
     </style>
 </head>
 <body>
 
   <nav class="glass-nav" data-aos="fade-down" data-aos-duration="1000">
-    <div class="nav-group">
-      <a href="#home">Home</a>
-      <a href="#about">About Us</a>
-      <a href="#features">Why Choose Us</a>
-    </div>
-    
     <div class="nav-logo">
       <img src="<?= htmlspecialchars($company['logo'] ?? '') ?>" alt="<?= htmlspecialchars($company['name'] ?? 'Logo') ?>">
     </div>
-    
+
+    <button class="hamburger-btn" onclick="toggleNavMenu()">
+      <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+
     <div class="nav-group">
-      <a href="#provide">Services</a>
-      <a href="#video">Demo</a>
-      <a href="#contact">Contact</a>
+      <a href="#home" onclick="closeNavMenu()">Home</a>
+      <a href="#about" onclick="closeNavMenu()">About Us</a>
+      <a href="#features" onclick="closeNavMenu()">Why Choose Us</a>
+    </div>
+  
+    <div class="nav-group right-group">
+      <a href="#provide" onclick="closeNavMenu()">Services</a>
+      <a href="#contact" onclick="closeNavMenu()">Contact</a>
+    
+      <div class="lang-dropdown">
+        <button class="lang-dropbtn">
+          <?php
+            if ($language_id == 1) echo 'BM';
+            else echo 'EN';
+          ?> 
+          <span style="font-size: 10px;">▼</span>
+        </button>
+        <div class="lang-dropdown-content">
+          <a href="?lang=2" class="<?= $language_id == 2 ? 'active' : '' ?>" onclick="closeNavMenu()">English (EN)</a>
+          <a href="?lang=1" class="<?= $language_id == 1 ? 'active' : '' ?>" onclick="closeNavMenu()">Bahasa Melayu (BM)</a>
+        </div>
+      </div>
     </div>
   </nav>
 
@@ -560,16 +746,15 @@ function renderCarousel($sectionName, $carousels, $cslides)
         <img src="<?= !empty($company['gallery']) ? htmlspecialchars($company['gallery'][0]['image_path']) : 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800' ?>" alt="About Us">
       </div>
       <div class="about-text" data-aos="fade-left">
-        <h2>About <?= htmlspecialchars($company['name'] ?? 'Us') ?></h2>
-        <p><?= strip_tags(html_entity_decode($company['description'] ?? 'We provide modern, high-end solutions tailored to elevate your business.')) ?></p>
+        <h2><?= $company['about_title'] ?? 'About Us' ?></h2>
+        <div><?= html_entity_decode($company['about_description'] ?? '') ?></div>
       </div>
     </div>
   </section>
 
   <section id="features">
     <div class="section-header" data-aos="fade-up">
-      <h2>Why Choose Us</h2>
-      <p>The advantages of working with top-tier professionals.</p>
+      <h2><?= $company['features_title'] ?? 'Why Choose Us' ?></h2>
     </div>
     <div class="bento-grid">
       <?php if (!empty($company['features'])): ?>
@@ -592,10 +777,12 @@ function renderCarousel($sectionName, $carousels, $cslides)
 
   <section id="provide" style="background-color: #fafafa; max-width: 100%; border-radius: 40px; margin-bottom: 50px;">
     <div style="max-width: 1200px; margin: 0 auto; padding: 100px 20px;">
+      
       <div class="section-header" data-aos="fade-up">
-        <h2>Our Services</h2>
-        <p>Comprehensive solutions for your success.</p>
+        <h2><?= $company['provide_title'] ?? 'Our Services' ?></h2>
+        <div><?= html_entity_decode($company['provide_text'] ?? '') ?></div>
       </div>
+
       <div class="bento-grid">
         <?php if (!empty($company['provide'])): ?>
           <?php foreach (array_slice($company['provide'], 0, 5) as $service): ?>
@@ -605,19 +792,22 @@ function renderCarousel($sectionName, $carousels, $cslides)
               <?php elseif(!empty($service['icon'])): ?>
                 <i class="<?= htmlspecialchars($service['icon']) ?> bento-icon-small"></i>
               <?php endif; ?>
+              
               <h4><?= strip_tags(html_entity_decode($service['title'])) ?></h4>
-              <p><?= strip_tags(html_entity_decode($service['text'] ?? '')) ?></p>
+              
+              <p><?= strip_tags(html_entity_decode($service['description'] ?? '')) ?></p>
+              
             </div>
           <?php endforeach; ?>
         <?php endif; ?>
       </div>
+      
     </div>
   </section>
 
   <section id="video">
     <div class="demo-container" data-aos="zoom-in">
-      <h2>Business Demonstration</h2>
-      <p>See how we can transform your workflow.</p>
+      <h2><?= $company['video_title'] ?? 'Demo' ?></h2>
       <div class="video-wrapper">
         <?php if (!empty($company['videos'])): ?>
           <?= html_entity_decode($company['videos'][0]['iframe_code']) ?>
@@ -683,5 +873,16 @@ function renderCarousel($sectionName, $carousels, $cslides)
       once: true
     });
   </script>
+  <script>
+  // Mobile Nav Toggle Functions
+  function toggleNavMenu() {
+    document.querySelector('.glass-nav').classList.toggle('nav-open');
+  }
+
+  function closeNavMenu() {
+    document.querySelector('.glass-nav').classList.remove('nav-open');
+  }
+  </script>
+  
 </body>
 </html>
